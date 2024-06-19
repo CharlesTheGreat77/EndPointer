@@ -52,11 +52,17 @@ Usage of ./endpointer:
 
 # Features
 •	URL Crawling: Specify a target URL to begin crawling.
+
 •	Custom User Agent: Option to set a custom user-agent for requests.
+
 •	Custom Headers: Load custom headers from a file to include in requests. (proxy rotation)
+
 •	Proxy Support: Use a list of proxies (HTTP/HTTPS/SOCKS5) to send requests.
+
 •	Thread Control: Set the number of concurrent threads for crawling.
+
 •	Depth Control: Define the maximum depth for crawling.
+
 •	Timeout Setting: Specify a timeout for requests to handle slow responses.
 
 # Example
