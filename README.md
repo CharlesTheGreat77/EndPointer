@@ -30,6 +30,25 @@ To use EndPointer, run the compiled binary with the desired flags:
 ```
 
 # Available Flags 🏳️
+```
+./endpointer -h
+Usage of ./endpointer:
+  -custom-headers string
+        specify a file containing headers to send on request [separated by line]
+  -depth int
+        specify the max depth for crawling [default: 2] (default 2)
+  -h    show usage
+  -proxies string
+        specify a file containing http/https/socks5 proxies [separated by line]
+  -threads int
+        specify the number of threads [default: 2] (default 2)
+  -timeout int
+        specify a timeout (seconds) [default: 3] (default 3)
+  -url string
+        specify a url [https://example.com]
+  -user-agent string
+        specify a custom user agent
+```
 
 # Features
 •	URL Crawling: Specify a target URL to begin crawling.
@@ -40,14 +59,12 @@ To use EndPointer, run the compiled binary with the desired flags:
 •	Depth Control: Define the maximum depth for crawling.
 •	Timeout Setting: Specify a timeout for requests to handle slow responses.
 
-
 # Example
 ```
 Example
 
 ./endpointer -url https://example.com -user-agent "MyCustomAgent/1.0" -custom-headers headers.txt -proxies proxies.txt -threads 5 -depth 3 -timeout 5
 ```
-
 
 # Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
