@@ -85,7 +85,7 @@ func EndPoint(domain *string, agent *string, headers *string, proxies *string, t
 		for _, regex := range regexes {
 			matches := regex.FindAllString(htmlContent, -1)
 			for _, match := range matches {
-				fmt.Println("Found endpoint:", match)
+				fmt.Println(match)
 			}
 		}
 	})
