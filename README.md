@@ -1,8 +1,6 @@
 # Mole 🚀
 Mole is a utility designed to crawl a given URL and list all discovered endpoints. 
 
-<img align="right" src="./assets/demo.gif" height="280" />
-
 - Automatically crawl and discover endpoints across a web application.
 - Lightweight
 - Multithreaded crawling
@@ -59,7 +57,13 @@ Usage of mole:
 
 You will be **required** to specify a *url*.
 
+# Demo 📹
+[Demo](https://github.com/user-attachments/assets/f53b2a57-3697-46d4-a75e-ba4eb845c425)
+
+
 ## Mole crawler 😈
+
+
 
 Out of the box, mole crawls html content for paths [endpoints] with the *selectors* specified into **crawl.go**. One can add *selectors* as they see fit.
 
@@ -78,7 +82,6 @@ c.OnHTML("form[action]", func(e *colly.HTMLElement) {
       }
 })
 ```
-
 → See <a href="https://go-colly.org/docs/introduction/start/">Colly Docs</a> for more details.
 
 # Contributing
