@@ -6,17 +6,15 @@ import (
 	"log"
 	"net/url"
 	"regexp"
-	"sync"
+	"strings"
 	"time"
 
 	"github.com/gocolly/colly/v2"
 )
 
+// function that uses colly to initially scrape for URLs
 func EndPoint(domain *string, agent *string, headers *string, proxies *string, threads *int, depth *int, timeout *int) {
-	var (
-		visited = make(map[string]bool)
-		mu      sync.Mutex
-	)
+	var visited []string
 
 	host, err := url.Parse(*domain)
 	if err != nil {
@@ -34,6 +32,7 @@ func EndPoint(domain *string, agent *string, headers *string, proxies *string, t
 	c := createCollector(host.Hostname(), *depth, *threads, *proxies, time.Duration(*timeout)*time.Second)
 	setCollyBehavior(c, *agent, customHeaders)
 
+	// regex for paths in HTML content
 	regexPatterns := []string{
 		`http://(/?%3C=(%22|%27|` + "`" + `))\/[a-zA-Z0-9_?&=\/\-#\.]*[%22|'|%60]`,
 		`http://(/?%3C=(%22|%27|` + "`" + `))\/[a-zA-Z0-9_?&=\/\-\#\.]*([%22|\'|%60])`,
@@ -48,44 +47,41 @@ func EndPoint(domain *string, agent *string, headers *string, proxies *string, t
 		regexes[i] = regex
 	}
 
-	checkAndVisit := func(link string) {
-		if utils.IsSameDomain(link, host.Hostname()) && utils.IsUnique(link, visited, &mu) {
-			c.Visit(link)
-		}
-	}
-
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		link := e.Request.AbsoluteURL(e.Attr("href"))
-		checkAndVisit(link)
-	})
-
 	c.OnHTML("form[action]", func(e *colly.HTMLElement) {
 		link := e.Request.AbsoluteURL(e.Attr("action"))
-		if utils.IsSameDomain(link, host.Hostname()) && utils.IsUnique(link, visited, &mu) {
+		if !utils.HasVisited(link, visited) {
 			fmt.Println(link)
+			visited = append(visited, link)
+			e.Request.Visit(link)
 		}
 	})
 
-	c.OnHTML("script[src]", func(e *colly.HTMLElement) {
+	c.OnHTML("link[href], a[href]", func(e *colly.HTMLElement) {
+		link := e.Request.AbsoluteURL(e.Attr("href"))
+		if !utils.HasVisited(link, visited) {
+			fmt.Println(link)
+			visited = append(visited, link)
+			e.Request.Visit(link)
+		}
+	})
+
+	c.OnHTML("script[src], iframe[src]", func(e *colly.HTMLElement) {
 		link := e.Request.AbsoluteURL(e.Attr("src"))
-		if utils.IsSameDomain(link, host.Hostname()) && utils.IsUnique(link, visited, &mu) {
+		if !utils.HasVisited(link, visited) {
+			fmt.Println(link)
+			visited = append(visited, link)
 			fmt.Println(link)
 		}
 	})
 
-	c.OnHTML("iframe[src]", func(e *colly.HTMLElement) {
-		link := e.Request.AbsoluteURL(e.Attr("src"))
-		if utils.IsSameDomain(link, host.Hostname()) && utils.IsUnique(link, visited, &mu) {
-			fmt.Println(link)
-		}
-	})
-
-	c.OnHTML("html", func(e *colly.HTMLElement) {
-		htmlContent := e.Text
-		for _, regex := range regexes {
-			matches := regex.FindAllString(htmlContent, -1)
-			for _, match := range matches {
-				fmt.Println(match)
+	c.OnHTML("meta[http-equiv=refresh][content]", func(e *colly.HTMLElement) {
+		content := e.Attr("content")
+		if urlIdx := strings.Index(content, "url="); urlIdx != -1 {
+			link := e.Request.AbsoluteURL(content[urlIdx+4:])
+			if !utils.HasVisited(link, visited) {
+				fmt.Println(link)
+				visited = append(visited, link)
+				e.Request.Visit(link)
 			}
 		}
 	})
