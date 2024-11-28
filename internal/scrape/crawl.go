@@ -34,8 +34,8 @@ func EndPoint(domain *string, agent *string, headers *string, proxies *string, t
 
 	// regex for paths in HTML content
 	regexPatterns := []string{
-		`http://(/?%3C=(%22|%27|` + "`" + `))\/[a-zA-Z0-9_?&=\/\-#\.]*[%22|'|%60]`,
-		`http://(/?%3C=(%22|%27|` + "`" + `))\/[a-zA-Z0-9_?&=\/\-\#\.]*([%22|\'|%60])`,
+		`http://(/?%3C=(%22|%27| + "" + ))\/[a-zA-Z0-9_?&=\/\-#\.]*[%22|'|%60]`,
+		`http://(/?%3C=(%22|%27| + "" + ))\/[a-zA-Z0-9_?&=\/\-\#\.]*([%22|\'|%60])`,
 	}
 
 	regexes := make([]*regexp.Regexp, len(regexPatterns))
@@ -50,27 +50,21 @@ func EndPoint(domain *string, agent *string, headers *string, proxies *string, t
 	c.OnHTML("form[action]", func(e *colly.HTMLElement) {
 		link := e.Request.AbsoluteURL(e.Attr("action"))
 		if !utils.HasVisited(link, visited) {
-			fmt.Println(link)
 			visited = append(visited, link)
+			fmt.Println(link)
 			e.Request.Visit(link)
 		}
 	})
 
-	c.OnHTML("link[href], a[href]", func(e *colly.HTMLElement) {
+	c.OnHTML("a[href], link[href], script[src], iframe[src], img[src]", func(e *colly.HTMLElement) {
 		link := e.Request.AbsoluteURL(e.Attr("href"))
-		if !utils.HasVisited(link, visited) {
-			fmt.Println(link)
-			visited = append(visited, link)
-			e.Request.Visit(link)
+		if link == "" {
+			link = e.Request.AbsoluteURL(e.Attr("src"))
 		}
-	})
-
-	c.OnHTML("script[src], iframe[src]", func(e *colly.HTMLElement) {
-		link := e.Request.AbsoluteURL(e.Attr("src"))
-		if !utils.HasVisited(link, visited) {
-			fmt.Println(link)
+		if link != "" && !utils.HasVisited(link, visited) {
 			visited = append(visited, link)
-			fmt.Println(link)
+			fmt.Println("Visiting:", link)
+			e.Request.Visit(link)
 		}
 	})
 
@@ -79,8 +73,8 @@ func EndPoint(domain *string, agent *string, headers *string, proxies *string, t
 		if urlIdx := strings.Index(content, "url="); urlIdx != -1 {
 			link := e.Request.AbsoluteURL(content[urlIdx+4:])
 			if !utils.HasVisited(link, visited) {
-				fmt.Println(link)
 				visited = append(visited, link)
+				fmt.Println(link)
 				e.Request.Visit(link)
 			}
 		}
