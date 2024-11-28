@@ -2,7 +2,7 @@ package cmd
 
 import (
     "flag"
-    "EndPointer/internal/scrape"
+    "mole/internal/scrape"
 )
 
 func Execute() {
