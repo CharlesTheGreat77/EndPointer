@@ -1,7 +1,7 @@
 package scrape
 
 import (
-	"EndPointer/utils"
+	"mole/utils"
 	"fmt"
 	"log"
 	"net/url"
