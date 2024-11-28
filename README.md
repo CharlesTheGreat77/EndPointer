@@ -1,79 +1,85 @@
-# EndPointer
-EndPointer is a command-line tool designed to crawl a given URL and list all discovered endpoints. Utilizing the Colly web scraping library, EndPointer efficiently navigates through websites to provide a comprehensive list of endpoints, allowing for deeper insight into the structure and available resources of a site.
+# Mole 🚀
+Mole is a utility designed to crawl a given URL and list all discovered endpoints. 
+
+<img align="right" src="./assets/demo.gif" height="280" />
+
+- Automatically crawl and discover endpoints across a web application.
+- Lightweight
+- Multithreaded crawling
+- Adjustable depth control
+
+Utilizing the Colly web scraping library, Mole efficiently navigates through websites to provide a comprehensive list of endpoints, allowing for deeper insight into the structure and available resources of a site.
 This was made with a bounty in mind 💰
 
-# Prerequisite 🚀
+
+## Installation ⚙️
+### Prerequisite
 | Prerequisite | Version |
 |--------------|---------|
 | Go           |  <=1.22 |
-```
-apt install golang-go || brew install go
+
+```bash
+# apt
+apt install golang-go
+# brew
+brew install golang
 ```
 
-# Install 💻
-```
-git clone https://github.com/CharlesTheGreat77/EndPointer
-cd EndPointer
-go mod init EndPointer
+### Clone Repo
+```bash
+git clone https://github.com/CharlesTheGreat77/mole
+cd mole
+# download(s) dependencies
+go mod init mole
 go mod tidy
+go build -o mole main.go
 ```
 
-# Build 👷‍♂️
-```
-go build -o endpointer main.go
-```
+## Usage 🔨
 
-# Usage 🦠
-To use EndPointer, run the compiled binary with the desired flags:
-```
-./endpointer -url https://example.com [options]
-```
-
-# Available Flags 🏳️
-```
-./endpointer -h
-Usage of ./endpointer:
+```bash
+╰─ mole -h
+Usage of mole:
   -custom-headers string
-        specify a file containing headers to send on request [separated by line]
+      specify a file containing headers to send on request [separated by line]
   -depth int
-        specify the max depth for crawling [default: 2] (default 2)
-  -h    show usage
+      specify the max depth for crawling [default: 2] (default 2)
+  -h	show usage
   -proxies string
-        specify a file containing http/https/socks5 proxies [separated by line]
+      specify a file containing http/https/socks5 proxies [separated by line]
   -threads int
-        specify the number of threads [default: 2] (default 2)
+      specify the number of threads [default: 2] (default 2)
   -timeout int
-        specify a timeout (seconds) [default: 3] (default 3)
+      specify a timeout (seconds) [default: 3] (default 3)
   -url string
-        specify a url [https://example.com]
+      specify a url [https://example.com]
   -user-agent string
-        specify a custom user agent
+      specify a custom user agent
 ```
 
-# Features
-•	URL Crawling: Specify a target URL to begin crawling.
+You will be **required** to specify a *url*.
 
-•	Custom User Agent: Option to set a custom user-agent for requests.
+## Mole crawler 😈
 
-•	Custom Headers: Load custom headers from a file to include in requests. (proxy rotation)
+Out of the box, mole crawls html content for paths [endpoints] with the *selectors* specified into **crawl.go**. One can add *selectors* as they see fit.
 
-•	Proxy Support: Use a list of proxies (HTTP/HTTPS/SOCKS5) to send requests.
+Here's a quick example `./internal/scrape/crawl.go`:
 
-•	Thread Control: Set the number of concurrent threads for crawling.
-
-•	Depth Control: Define the maximum depth for crawling.
-
-•	Timeout Setting: Specify a timeout for requests to handle slow responses.
-
-# Example
+```go
+// selector to search for
+c.OnHTML("form[action]", func(e *colly.HTMLElement) {
+    // extract URL in selector
+      link := e.Request.AbsoluteURL(e.Attr("action"))
+    // prevent duplicate visit(s) and entries
+      if !utils.HasVisited(link, visited) {
+            visited = append(visited, link)
+            fmt.Println(link)
+            e.Request.Visit(link)
+      }
+})
 ```
-Example
 
-./endpointer -url https://example.com -user-agent "MyCustomAgent/1.0" -custom-headers headers.txt -proxies proxies.txt -threads 5 -depth 3 -timeout 5
-```
+→ See <a href="https://go-colly.org/docs/introduction/start/">Colly Docs</a> for more details.
 
 # Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-# Acknowledgments
-•	Colly - Elegant Scraper and Crawler Framework for Golang.
