@@ -10,7 +10,7 @@ import (
     "github.com/gocolly/colly/v2"
     "github.com/gocolly/colly/v2/proxy"
     "github.com/imroc/req/v3"
-    "EndPointer/utils"
+    "mole/utils"
 )
 
 // function to create a colly collector
