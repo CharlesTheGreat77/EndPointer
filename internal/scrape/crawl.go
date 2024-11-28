@@ -63,7 +63,7 @@ func EndPoint(domain *string, agent *string, headers *string, proxies *string, t
 		}
 		if link != "" && !utils.HasVisited(link, visited) {
 			visited = append(visited, link)
-			fmt.Println("Visiting:", link)
+			fmt.Println(link)
 			e.Request.Visit(link)
 		}
 	})
