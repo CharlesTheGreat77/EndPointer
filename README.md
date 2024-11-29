@@ -1,10 +1,8 @@
-# Mole 🚀
-Mole is a utility designed to crawl a given URL and list all discovered endpoints. 
-
-- Automatically crawl and discover endpoints across a web application.
-- Lightweight
-- Multithreaded crawling
-- Adjustable depth control
+<div align="center">
+  <img src="./assets/mole.png" alt="Mole Logo" />
+  <h1><strong>Mole</strong></h1>
+  <p>🔎 Dig through web applications to find all endpoints 🔍</p>
+</div>
 
 Utilizing the Colly web scraping library, Mole efficiently navigates through websites to provide a comprehensive list of endpoints, allowing for deeper insight into the structure and available resources of a site.
 This was made with a bounty in mind 💰
@@ -61,10 +59,7 @@ You will be **required** to specify a *url*.
 [Demo](https://github.com/user-attachments/assets/f53b2a57-3697-46d4-a75e-ba4eb845c425)
 
 
-## Mole crawler 😈
-
-
-
+## Mole crawler 
 Out of the box, mole crawls html content for paths [endpoints] with the *selectors* specified into **crawl.go**. One can add *selectors* as they see fit.
 
 Here's a quick example `./internal/scrape/crawl.go`:
